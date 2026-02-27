@@ -2,10 +2,8 @@
   {
     "scenario": 1,
     "name": "Normal Task",
-    "status": "FAIL",
-    "errors": [
-      "Client error '404 Not Found' for url 'http://localhost:11434/api/chat'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
-    ],
+    "status": "PARTIAL",
+    "errors": [],
     "duration": 0.04
   },
   {
@@ -25,18 +23,16 @@
   {
     "scenario": 4,
     "name": "GitHub CLI Error",
-    "status": "PARTIAL",
+    "status": "PASS",
     "errors": [],
-    "duration": 1.98
+    "duration": 0.67
   },
   {
     "scenario": 5,
     "name": "Invalid Ollama",
-    "status": "FAIL",
-    "errors": [
-      "Client error '404 Not Found' for url 'http://localhost:11434/api/generate'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
-    ],
-    "duration": 0.01
+    "status": "PASS",
+    "errors": [],
+    "duration": 0.02
   },
   {
     "scenario": 6,
