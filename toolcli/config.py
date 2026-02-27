@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 class OllamaConfig(BaseModel):
     """Ollama configuration."""
     host: str = Field(default="http://localhost:11434", description="Ollama server host")
-    default_model: str = Field(default="qwen3:4b", description="Default model for reasoning")
+    default_model: str = Field(default="qwen3:32b", description="Default model for reasoning")
     timeout: int = Field(default=120, description="Request timeout in seconds")
 
 

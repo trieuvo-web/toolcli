@@ -2,9 +2,9 @@
   {
     "scenario": 1,
     "name": "Normal Task",
-    "status": "PARTIAL",
+    "status": "PASS",
     "errors": [],
-    "duration": 0.04
+    "duration": 50.97
   },
   {
     "scenario": 2,
@@ -25,7 +25,7 @@
     "name": "GitHub CLI Error",
     "status": "PASS",
     "errors": [],
-    "duration": 0.67
+    "duration": 0.59
   },
   {
     "scenario": 5,
