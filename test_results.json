@@ -1,0 +1,48 @@
+[
+  {
+    "scenario": 1,
+    "name": "Normal Task",
+    "status": "FAIL",
+    "errors": [
+      "Client error '404 Not Found' for url 'http://localhost:11434/api/chat'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+    ],
+    "duration": 0.04
+  },
+  {
+    "scenario": 2,
+    "name": "Multi-step Workflow",
+    "status": "PASS",
+    "errors": [],
+    "duration": 2.51
+  },
+  {
+    "scenario": 3,
+    "name": "OpenCode Error",
+    "status": "PASS",
+    "errors": [],
+    "duration": 0.0
+  },
+  {
+    "scenario": 4,
+    "name": "GitHub CLI Error",
+    "status": "PARTIAL",
+    "errors": [],
+    "duration": 1.98
+  },
+  {
+    "scenario": 5,
+    "name": "Invalid Ollama",
+    "status": "FAIL",
+    "errors": [
+      "Client error '404 Not Found' for url 'http://localhost:11434/api/generate'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404"
+    ],
+    "duration": 0.01
+  },
+  {
+    "scenario": 6,
+    "name": "Heartbeat Resume",
+    "status": "PASS",
+    "errors": [],
+    "duration": 0.0
+  }
+]
