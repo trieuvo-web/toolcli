@@ -1,0 +1,76 @@
+# OpenSpec Capability Spec: Ollama Local Reasoning
+
+spec_id: ollama-reasoning
+version: 1.0.0
+description: |
+  Capability to use local Ollama models for intelligent reasoning,
+  decision making, and task analysis.
+
+# Supported operations
+operations:
+  - name: chat
+    description: Chat with an Ollama model
+    input:
+      messages: list<object>
+      model: optional<string>
+      tools: optional<list>
+      stream: boolean (default: false)
+    output:
+      response: string
+      tool_calls: optional<list>
+    
+  - name: generate
+    description: Generate text completion
+    input:
+      prompt: string
+      model: optional<string>
+      system: optional<string>
+    output:
+      response: string
+      tokens_generated: integer
+    
+  - name: analyze_openspec_change
+    description: Analyze an OpenSpec change request
+    input:
+      change_name: string
+      description: string
+    output:
+      change_type: string
+      workflow_steps: list<string>
+      tools_required: list<string>
+      risks: list<string>
+    
+  - name: embed
+    description: Get embeddings for text
+    input:
+      text: string
+      model: string (default: bge-m3)
+    output:
+      embeddings: list<float>
+
+# Available models
+models:
+  fast:
+    name: qwen3:4b
+    description: Fast responses, general tasks
+  coding:
+    name: qwen2.5-coder:7b
+    description: Code generation and review
+  general:
+    name: llama3.1:8b
+    description: General reasoning
+  reasoning:
+    name: deepseek-r1:8b
+    description: Deep reasoning tasks
+
+# Constraints
+constraints:
+  - Requires Ollama server to be running
+  - Models must be pulled before use: `ollama pull <model>`
+  - GPU recommended for larger models
+
+# Configuration
+config:
+  default_host: http://localhost:11434
+  default_model: qwen3:4b
+  timeout: 120

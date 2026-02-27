@@ -1,0 +1,64 @@
+# OpenSpec Flow: Complete OpenSpec Workflow
+
+flow_id: complete-openspec-workflow
+version: 1.0.0
+description: |
+  Complete end-to-end OpenSpec workflow from exploration to implementation.
+
+trigger:
+  type: manual
+  parameters:
+    change_name: string
+    description: string
+    workspace: optional<string>
+
+steps:
+  - id: analyze
+    name: Analyze Change
+    action: ollama-reasoning.analyze_openspec_change
+    input:
+      change_name: "{{trigger.change_name}}"
+      description: "{{trigger.description}}"
+    output: analysis
+    
+  - id: explore
+    name: Explore Phase
+    action: openspec-workflow.explore
+    input:
+      topic: "{{trigger.description}}"
+    output: exploration
+    condition: "{{analysis.change_type != 'trivial'}}"
+    
+  - id: create_change
+    name: Create Change
+    action: openspec-workflow.new_change
+    input:
+      name: "{{trigger.change_name}}"
+      description: "{{trigger.description}}"
+    output: change_info
+    
+  - id: continue_workflow
+    name: Continue Workflow
+    action: openspec-workflow.continue_change
+    output: spec_info
+    
+  - id: apply
+    name: Apply Changes
+    action: openspec-workflow.apply_change
+    output: implementation
+    
+  - id: verify
+    name: Verify Changes
+    action: openspec-workflow.verify_change
+    input:
+      change_id: "{{change_info.change_id}}"
+    output: verification
+
+error_handling:
+  on_failure: retry
+  max_retries: 2
+  retry_delay: 10
+
+on_complete:
+  - log: "OpenSpec workflow completed for {{trigger.change_name}}"
+  - notify: true

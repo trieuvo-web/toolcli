@@ -1,0 +1,47 @@
+# OpenSpec Configuration for toolcli
+
+version: "1.0"
+
+# Project metadata
+project:
+  name: toolcli
+  description: CLI agent tool with OpenSpec workflow
+  
+# Agent definitions
+agents:
+  toolcli-agent:
+    description: Main toolcli agent for orchestrating OpenSpec workflows
+    capabilities:
+      - openspec
+      - opencode
+      - github
+      - ollama-reasoning
+    default_model: qwen3:4b
+    
+# Tool integrations
+tools:
+  opencode:
+    type: cli
+    command: opencode
+    
+  gh:
+    type: cli
+    command: gh
+    
+  ollama:
+    type: api
+    host: http://localhost:11434
+
+# Workflow settings
+workflows:
+  default_agent: toolcli-agent
+  auto_verify: true
+  max_retries: 3
+  
+# Heartbeat configuration
+heartbeat:
+  enabled: true
+  interval: 300
+  persistence:
+    state_file: ~/.toolcli/state.json
+    log_file: ~/.toolcli/heartbeat.log

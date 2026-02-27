@@ -1,0 +1,81 @@
+# OpenSpec Flow: Heartbeat Loop Integration
+
+flow_id: heartbeat-loop
+version: 1.0.0
+description: |
+  Continuous heartbeat loop for persistent agent operation.
+  Processes pending tasks and maintains agent state.
+
+trigger:
+  type: scheduled
+  interval: "{{config.heartbeat.interval}}"
+
+steps:
+  - id: load_state
+    name: Load Agent State
+    action: internal.load_state
+    output: state
+    
+  - id: check_interrupted
+    name: Resume Interrupted Tasks
+    action: internal.resume_interrupted
+    output: interrupted_tasks
+    
+  - id: process_pending
+    name: Process Pending Tasks
+    foreach: "{{state.get_pending_tasks()}}"
+    steps:
+      - id: mark_running
+        action: internal.update_task_status
+        input:
+          task_id: "{{item.id}}"
+          status: running
+          
+      - id: execute_task
+        action: agent-task-execution
+        input:
+          task_type: "{{item.type}}"
+          description: "{{item.description}}"
+          params: "{{item.params}}"
+        output: task_result
+        
+      - id: update_complete
+        action: internal.update_task_status
+        input:
+          task_id: "{{item.id}}"
+          status: completed
+          result: "{{task_result}}"
+    on_error:
+      - action: internal.update_task_status
+        input:
+          task_id: "{{item.id}}"
+          status: failed
+          error: "{{error.message}}"
+          
+  - id: process_retries
+    name: Process Retry Queue
+    foreach: "{{state.get_failed_tasks()}}"
+    condition: "{{item.retry_count < item.max_retries}}"
+    steps:
+      - id: retry_task
+        action: agent-task-execution
+        input:
+          task_type: "{{item.type}}"
+          description: "{{item.description}} (retry {{item.retry_count + 1}})"
+          params: "{{item.params}}"
+        output: retry_result
+        
+  - id: save_state
+    name: Save Agent State
+    action: internal.save_state
+    input:
+      last_heartbeat: "{{now()}}"
+
+error_handling:
+  on_failure: log_continue
+  
+metrics:
+  - tasks_processed
+  - tasks_failed
+  - retry_count
+  - execution_time

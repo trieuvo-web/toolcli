@@ -1,0 +1,66 @@
+# OpenSpec Capability Spec: OpenSpec Workflow Management
+
+spec_id: openspec-workflow
+version: 1.0.0
+description: |
+  Capability to execute OpenSpec workflow commands for structured 
+  agent-driven development.
+
+# Supported operations
+operations:
+  - name: explore
+    description: Explore and analyze a topic before making changes
+    input:
+      topic: string
+      context: optional<object>
+    output:
+      analysis: string
+      recommendations: list<string>
+    
+  - name: new_change
+    description: Create a new OpenSpec change
+    input:
+      name: string
+      description: optional<string>
+    output:
+      change_id: string
+      proposal_path: string
+    
+  - name: continue_change
+    description: Continue OpenSpec workflow (create spec/tasks)
+    input:
+      change_id: optional<string>
+    output:
+      design_path: string
+      spec_path: string
+      tasks_path: string
+    
+  - name: apply_change
+    description: Apply/Implement all tasks in a change
+    input:
+      change_id: optional<string>
+    output:
+      completed_tasks: list<string>
+      failed_tasks: list<string>
+    
+  - name: verify_change
+    description: Verify a completed change
+    input:
+      change_id: string
+    output:
+      valid: boolean
+      issues: list<string>
+
+# Constraints
+constraints:
+  - All operations require opencode CLI to be installed and authenticated
+  - Workspace must be initialized with `openspec init`
+  - Changes must follow naming convention: [a-z0-9-]+
+
+# Example workflow
+example: |
+  1. /opsx-explore "Add user authentication"
+  2. /opsx-new auth-system
+  3. /opsx-continue
+  4. /opsx-apply
+  5. /opsx-verify auth-system

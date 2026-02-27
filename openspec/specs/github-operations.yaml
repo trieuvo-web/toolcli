@@ -1,0 +1,75 @@
+# OpenSpec Capability Spec: GitHub Operations
+
+spec_id: github-operations
+version: 1.0.0
+description: |
+  Capability to manage GitHub repositories, issues, and pull requests
+  using the gh CLI.
+
+# Supported operations
+operations:
+  - name: create_repo
+    description: Create a new GitHub repository
+    input:
+      name: string
+      description: optional<string>
+      private: boolean (default: false)
+      owner: optional<string>
+    output:
+      repo_url: string
+      clone_url: string
+    
+  - name: create_issue
+    description: Create a new issue
+    input:
+      title: string
+      body: optional<string>
+      labels: optional<list<string>>
+      repo: optional<string>
+    output:
+      issue_number: integer
+      issue_url: string
+    
+  - name: create_pr
+    description: Create a pull request
+    input:
+      title: string
+      body: optional<string>
+      base: string (default: main)
+      head: optional<string>
+      repo: optional<string>
+    output:
+      pr_number: integer
+      pr_url: string
+    
+  - name: merge_pr
+    description: Merge a pull request
+    input:
+      pr_number: integer
+      method: string (default: merge) [merge, squash, rebase]
+      repo: optional<string>
+    output:
+      success: boolean
+      commit_sha: optional<string>
+    
+  - name: commit_and_push
+    description: Commit changes and push to remote
+    input:
+      message: string
+      branch: optional<string>
+      cwd: optional<string>
+    output:
+      success: boolean
+      commit_sha: optional<string>
+
+# Constraints
+constraints:
+  - Requires gh CLI to be installed and authenticated
+  - Git operations require being in a git repository
+  - Some operations require appropriate GitHub permissions
+
+# Safety rules
+safety:
+  - Confirm before creating public repositories
+  - Confirm before merging pull requests
+  - Never force push without explicit confirmation

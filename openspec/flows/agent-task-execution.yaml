@@ -1,0 +1,61 @@
+# OpenSpec Flow: Agent Task Execution
+
+flow_id: agent-task-execution
+version: 1.0.0
+description: |
+  Execute a generic agent task with reasoning and tool selection.
+
+trigger:
+  type: queue
+  parameters:
+    task_type: string
+    description: string
+    params: object
+
+steps:
+  - id: reason
+    name: Reason About Task
+    action: ollama-reasoning.chat
+    input:
+      messages:
+        - role: system
+          content: "You are a task router. Determine the best approach."
+        - role: user
+          content: "Task: {{trigger.description}}"
+    output: reasoning
+    
+  - id: select_tools
+    name: Select Tools
+    action: ollama-reasoning.chat
+    input:
+      messages:
+        - role: system
+          content: "Select tools based on reasoning: {{reasoning.response}}"
+        - role: user
+          content: "What tools should be used?"
+    output: tool_selection
+    
+  - id: execute
+    name: Execute Task
+    action: "{{trigger.task_type}}"
+    input: "{{trigger.params}}"
+    output: result
+    
+  - id: verify
+    name: Verify Result
+    action: ollama-reasoning.chat
+    input:
+      messages:
+        - role: system
+          content: "Verify the task was completed successfully"
+        - role: user
+          content: "Task: {{trigger.description}}\nResult: {{result}}"
+    output: verification
+
+error_handling:
+  on_failure: retry
+  max_retries: 3
+
+on_complete:
+  - update_state: true
+  - log: true
